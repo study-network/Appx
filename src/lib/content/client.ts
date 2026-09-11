@@ -3,8 +3,6 @@
  * never to the upstream host directly.
  */
 
-
-
 export class ContentError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -13,7 +11,10 @@ export class ContentError extends Error {
   }
 }
 
-export async function contentGet<T>(path: string, params?: Record<string, string | number | undefined>) {
+export async function contentGet<T>(
+  path: string,
+  params?: Record<string, string | number | undefined>,
+) {
   const search = new URLSearchParams();
   for (const [k, v] of Object.entries(params ?? {})) {
     if (v !== undefined && v !== null && v !== "") search.set(k, String(v));
@@ -126,7 +127,6 @@ export type ScheduleDetails = ContentItem & {
   subject?: { _id?: string; name?: string; slug?: string };
 };
 
-
 export function imageUrl(ref: ImageRef | undefined, fallback?: string | null): string | null {
   if (ref?.baseUrl && ref?.key) return `${ref.baseUrl}${ref.key}`;
   return fallback ?? null;
@@ -207,7 +207,6 @@ export type ScheduleItem = ContentItem & {
   isVideoLecture?: boolean | undefined;
 };
 
-
 type RawScheduleItem = { type?: string; _id?: string; data?: Record<string, unknown> };
 
 /** Today's schedule ships items wrapped as { type, data }; flatten to a usable shape. */
@@ -231,8 +230,11 @@ export const todaysScheduleQuery = (batchId: string) => ({
   staleTime: 60 * 1000,
 });
 
-
-export const scheduleDetailsQuery = (batchSlug: string, subjectSlug: string, scheduleId: string) => ({
+export const scheduleDetailsQuery = (
+  batchSlug: string,
+  subjectSlug: string,
+  scheduleId: string,
+) => ({
   queryKey: ["schedule-details", batchSlug, subjectSlug, scheduleId],
   queryFn: () =>
     contentGet<ScheduleDetails>(
@@ -240,7 +242,6 @@ export const scheduleDetailsQuery = (batchSlug: string, subjectSlug: string, sch
     ),
   staleTime: 5 * 60 * 1000,
 });
-
 
 /** Resolves an attachment to its absolute file URL, or null when the source has none. */
 export function attachmentUrl(a: Attachment | undefined | null): string | null {
@@ -293,6 +294,3 @@ export function buildPlayerUrl(details: ScheduleDetails, fallbackBatchId?: strin
   });
   return `${PLAYER_ORIGIN}/play.php?${params.toString()}`;
 }
-
-
-

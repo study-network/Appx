@@ -1,0 +1,6 @@
+{
+  "name": "PW Study Network",
+  "description": "PW Study Network - Educational Learning Platform",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,9 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { GraduationCap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import type { CatalogBatch } from "@/lib/content/catalog.server";
+import { DEFAULT_BANNER_URL } from "./branding";
 
 export function BatchCard({ batch }: { batch: CatalogBatch }) {
+  const initialBanner = batch.photo?.trim() ? batch.photo : DEFAULT_BANNER_URL;
+  const [imgSrc, setImgSrc] = useState(initialBanner);
+
+  useEffect(() => {
+    setImgSrc(batch.photo?.trim() ? batch.photo : DEFAULT_BANNER_URL);
+  }, [batch.photo]);
+
   return (
     <Link
       to="/batch/$batchId"
@@ -11,18 +19,17 @@ export function BatchCard({ batch }: { batch: CatalogBatch }) {
       className="group flex gap-3 rounded-2xl border border-border bg-card p-3 transition-colors hover:border-accent sm:flex-col sm:gap-0 sm:p-0"
     >
       <div className="h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-muted sm:h-36 sm:w-full sm:rounded-b-none sm:rounded-t-2xl">
-        {batch.photo ? (
-          <img
-            src={batch.photo}
-            alt={batch.name}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <GraduationCap className="h-6 w-6 text-muted-foreground" aria-hidden />
-          </div>
-        )}
+        <img
+          src={imgSrc}
+          alt={batch.name}
+          loading="lazy"
+          onError={() => {
+            if (imgSrc !== DEFAULT_BANNER_URL) {
+              setImgSrc(DEFAULT_BANNER_URL);
+            }
+          }}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
       </div>
       <div className="min-w-0 flex-1 sm:p-3">
         <h3 className="line-clamp-2 text-sm font-semibold leading-snug">{batch.name}</h3>

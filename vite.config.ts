@@ -24,4 +24,33 @@ export default defineConfig({
       nodeCompat: true,
     },
   },
+  vite: {
+    resolve: {
+      dedupe: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@tanstack/react-query",
+        "@tanstack/query-core",
+        "@tanstack/react-router",
+        "@tanstack/router-core",
+      ],
+    },
+    optimizeDeps: {
+      include: [
+        "react",
+        "react-dom",
+        "react-dom/client",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@tanstack/react-query",
+        "@tanstack/query-core",
+        "lucide-react",
+        "clsx",
+        "tailwind-merge",
+        "class-variance-authority",
+      ],
+    },
+  },
 });

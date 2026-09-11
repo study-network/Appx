@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, ChevronRight, Clock, PlayCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { CardSkeleton, EmptyState, ErrorState } from "@/components/apex/states";
+import { DEFAULT_BANNER_URL } from "@/components/apex/branding";
 import {
   batchDetailsQuery,
   buildPlayPath,
@@ -18,7 +20,8 @@ function classStatus(item: ScheduleItem): ClassStatus | null {
   const raw = `${item.tag ?? ""} ${item.status ?? ""}`.toLowerCase();
   if (raw.includes("end") || raw.includes("complet") || raw.includes("expired")) return "ended";
   if (raw.includes("live") || raw.includes("ongoing") || raw.includes("started")) return "live";
-  if (raw.includes("upcoming") || raw.includes("todo") || raw.includes("scheduled")) return "upcoming";
+  if (raw.includes("upcoming") || raw.includes("todo") || raw.includes("scheduled"))
+    return "upcoming";
 
   const now = Date.now();
   const start = item.startTime ? new Date(item.startTime).getTime() : NaN;
@@ -140,18 +143,15 @@ function TodaysClasses({
   );
 }
 
-
-
-
 export const Route = createFileRoute("/batch/$batchId/")({
   head: () => ({
     meta: [
-      { title: "Batch — PW-MARCO" },
+      { title: "Batch — PW Study Network" },
       {
         name: "description",
-        content: "Subjects, topics and lectures for this PW-MARCO batch.",
+        content: "Subjects, topics and lectures for this PW Study Network batch.",
       },
-      { property: "og:title", content: "Batch — PW-MARCO" },
+      { property: "og:title", content: "Batch — PW Study Network" },
       {
         property: "og:description",
         content: "Open subjects, topics and lectures for this batch.",
@@ -175,7 +175,15 @@ function BatchPage() {
   const { batchId } = Route.useParams();
   const query = useQuery(batchDetailsQuery(batchId));
   const batch = query.data;
-  const cover = imageUrl(batch?.previewImage);
+  const initialCover =
+    (batch?.previewImage ? imageUrl(batch.previewImage) : null) || DEFAULT_BANNER_URL;
+  const [coverSrc, setCoverSrc] = useState<string>(initialCover);
+
+  useEffect(() => {
+    const nextCover =
+      (batch?.previewImage ? imageUrl(batch.previewImage) : null) || DEFAULT_BANNER_URL;
+    setCoverSrc(nextCover);
+  }, [batch?.previewImage]);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
@@ -196,9 +204,16 @@ function BatchPage() {
       {batch ? (
         <>
           <div className="overflow-hidden rounded-2xl border border-border bg-card">
-            {cover ? (
-              <img src={cover} alt={batch.name} className="h-40 w-full object-cover sm:h-56" />
-            ) : null}
+            <img
+              src={coverSrc}
+              alt={batch.name}
+              onError={() => {
+                if (coverSrc !== DEFAULT_BANNER_URL) {
+                  setCoverSrc(DEFAULT_BANNER_URL);
+                }
+              }}
+              className="h-40 w-full object-cover sm:h-56"
+            />
             <div className="p-4">
               <h1 className="text-xl font-bold leading-snug sm:text-2xl">{batch.name}</h1>
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">

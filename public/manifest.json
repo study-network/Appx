@@ -1,0 +1,22 @@
+{
+  "name": "PW Study Network",
+  "short_name": "PW Study Network",
+  "description": "PW Study Network - Educational Learning Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "icons": [
+    {
+      "src": "/pw-logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}

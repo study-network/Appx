@@ -13,9 +13,9 @@ export const Route = createFileRoute("/batch/$batchId/$subjectSlug/")({
   }),
   head: () => ({
     meta: [
-      { title: "Subject Topics — PW-MARCO" },
+      { title: "Subject Topics — PW Study Network" },
       { name: "description", content: "All topics and chapters inside this subject." },
-      { property: "og:title", content: "Subject Topics — PW-MARCO" },
+      { property: "og:title", content: "Subject Topics — PW Study Network" },
       { property: "og:description", content: "All topics and chapters inside this subject." },
     ],
   }),

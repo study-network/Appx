@@ -11,7 +11,14 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { Wordmark, LOGO_URL, TELEGRAM_URL } from "../components/apex/branding";
+import {
+  Wordmark,
+  TELEGRAM_URL,
+  WHATSAPP_URL,
+  BRAND_NAME,
+  BRAND_DESCRIPTION,
+  LOGO_URL,
+} from "../components/apex/branding";
 import { TelegramPopup } from "../components/apex/TelegramPopup";
 
 function NotFoundComponent() {
@@ -79,20 +86,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PW-MARCO — Lectures, Notes & Batches" },
+      { title: BRAND_NAME },
       {
         name: "description",
-        content:
-          "PW-MARCO — powered by MARCO — browse batches, subjects, topics and lectures on any device.",
+        content: BRAND_DESCRIPTION,
       },
-      { name: "author", content: "PW-MARCO" },
-      { property: "og:title", content: "PW-MARCO — Lectures, Notes & Batches" },
+      { name: "application-name", content: BRAND_NAME },
+      { name: "author", content: BRAND_NAME },
+      { property: "og:title", content: BRAND_NAME },
       {
         property: "og:description",
-        content: "Browse batches, subjects, topics and lectures on any device.",
+        content: BRAND_DESCRIPTION,
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: LOGO_URL },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: BRAND_NAME },
+      { name: "twitter:description", content: BRAND_DESCRIPTION },
+      { name: "twitter:image", content: LOGO_URL },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -105,7 +116,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "icon", type: "image/jpeg", href: "/pw-logo.jpg" },
+      { rel: "shortcut icon", href: "/favicon.png" },
+      { rel: "apple-touch-icon", href: "/pw-logo.jpg" },
+      { rel: "manifest", href: "/manifest.json" },
     ],
   }),
   shellComponent: RootShell,
@@ -137,17 +151,30 @@ function RootComponent() {
         <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-3">
             <Wordmark />
-            <nav className="flex items-center gap-3 text-sm font-semibold">
-              <Link to="/batches" className="text-muted-foreground hover:text-foreground">
+            <nav className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-semibold">
+              <Link
+                to="/batches"
+                className="rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+              >
                 Batches
               </Link>
               <a
                 href={TELEGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg bg-primary px-3 py-2 text-xs font-bold text-primary-foreground"
+                aria-label="Join PW Study Network on Telegram"
+                className="rounded-lg bg-primary px-3 py-1.5 sm:py-2 text-xs font-bold text-primary-foreground transition-opacity hover:opacity-90"
               >
-                Telegram
+                <span className="hidden sm:inline">Join </span>Telegram
+              </a>
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Join PW Study Network on WhatsApp"
+                className="hidden sm:inline-flex items-center rounded-lg border border-border bg-card px-3 py-2 text-xs font-bold text-foreground transition-colors hover:bg-accent"
+              >
+                WhatsApp
               </a>
             </nav>
           </div>
@@ -158,9 +185,33 @@ function RootComponent() {
           <Outlet />
         </main>
 
-        <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-          <p className="font-semibold">PW-MARCO — Lectures, Notes & Batches</p>
-          <p className="mt-1">Content is served from the connected authorized source.</p>
+        <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
+          <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 sm:flex-row">
+            <div className="text-center sm:text-left">
+              <p className="font-semibold text-foreground">{BRAND_NAME}</p>
+              <p className="mt-1">{BRAND_DESCRIPTION}</p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={TELEGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Join PW Study Network on Telegram"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 font-medium text-foreground transition-colors hover:bg-accent"
+              >
+                Join Telegram
+              </a>
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Join PW Study Network on WhatsApp"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 font-medium text-foreground transition-colors hover:bg-accent"
+              >
+                Join WhatsApp Channel
+              </a>
+            </div>
+          </div>
         </footer>
 
         <TelegramPopup />

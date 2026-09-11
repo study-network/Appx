@@ -34,9 +34,9 @@ export const Route = createFileRoute("/batch/$batchId/$subjectSlug/$topicId")({
   }),
   head: () => ({
     meta: [
-      { title: "Lectures — PW-MARCO" },
+      { title: "Lectures — PW Study Network" },
       { name: "description", content: "Watch lectures and open notes for this topic." },
-      { property: "og:title", content: "Lectures — PW-MARCO" },
+      { property: "og:title", content: "Lectures — PW Study Network" },
       { property: "og:description", content: "Watch lectures and open notes for this topic." },
     ],
   }),
@@ -56,7 +56,12 @@ function TopicPage() {
   const isTests = tab === "DppTests";
 
   const contents = useQuery({
-    ...contentsQuery(batchSlug ?? "", subjectSlug, topicId, (isTests ? "videos" : tab) as ContentType),
+    ...contentsQuery(
+      batchSlug ?? "",
+      subjectSlug,
+      topicId,
+      (isTests ? "videos" : tab) as ContentType,
+    ),
     enabled: Boolean(batchSlug) && !isTests,
   });
 
@@ -121,7 +126,9 @@ function TopicPage() {
                 >
                   <ClipboardList className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold">{t.test?.name ?? "DPP Test"}</span>
+                    <span className="block text-sm font-semibold">
+                      {t.test?.name ?? "DPP Test"}
+                    </span>
                     <span className="mt-0.5 block text-xs text-muted-foreground">
                       {[
                         t.test?.totalQuestions ? `${t.test.totalQuestions} questions` : null,
@@ -187,11 +194,12 @@ function VideoRow({
         />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="line-clamp-2 text-sm font-semibold">
-          {title}
-        </span>
+        <span className="line-clamp-2 text-sm font-semibold">{title}</span>
         <span className="mt-0.5 block text-xs text-muted-foreground">
-          {[item.videoDetails?.duration, item.date ? new Date(item.date).toLocaleDateString() : null]
+          {[
+            item.videoDetails?.duration,
+            item.date ? new Date(item.date).toLocaleDateString() : null,
+          ]
             .filter(Boolean)
             .join(" · ")}
         </span>

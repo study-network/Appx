@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { X, Send } from "lucide-react";
+import { X, Send, MessageCircle } from "lucide-react";
 
-import { LOGO_URL, TELEGRAM_URL } from "./branding";
+import { BRAND_NAME, TELEGRAM_URL, WHATSAPP_URL, AppLogo } from "./branding";
 
-const DISMISS_KEY = "apex-telegram-dismissed";
+const DISMISS_KEY = "pw-study-network-popup-dismissed";
 
 export function TelegramPopup() {
   const [open, setOpen] = useState(false);
@@ -25,7 +25,7 @@ export function TelegramPopup() {
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-3 backdrop-blur-sm sm:items-center">
       <div
         role="dialog"
-        aria-label="Join PW-MARCO on Telegram"
+        aria-label="Join PW Study Network on Telegram"
         className="relative w-full max-w-sm rounded-3xl border border-border bg-card p-6 text-center shadow-xl"
       >
         <button
@@ -35,30 +35,45 @@ export function TelegramPopup() {
         >
           <X className="h-4 w-4" aria-hidden />
         </button>
-        <img
-          src={LOGO_URL}
-          alt="PW-MARCO logo"
-          className="mx-auto h-16 w-16 object-contain"
-          width={64}
-          height={64}
-        />
-        <h2 className="mt-3 text-lg font-bold">Join PW-MARCO on Telegram</h2>
+
+        <div className="mx-auto flex justify-center">
+          <AppLogo className="h-16 w-16" size={64} alt="PW Study Network" />
+        </div>
+
+        <h2 className="mt-3 text-lg font-bold text-foreground">Join {BRAND_NAME}</h2>
         <p className="mt-1.5 text-sm text-muted-foreground">
           Get new batch drops, lecture updates and study alerts the moment they go live.
         </p>
-        <a
-          href={TELEGRAM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={dismiss}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-        >
-          <Send className="h-4 w-4" aria-hidden />
-          JOIN NOW
-        </a>
+
+        <div className="mt-5 space-y-2">
+          <a
+            href={TELEGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={dismiss}
+            aria-label="Join PW Study Network on Telegram"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            <Send className="h-4 w-4" aria-hidden />
+            Join Telegram
+          </a>
+
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={dismiss}
+            aria-label="Join PW Study Network on WhatsApp"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-accent"
+          >
+            <MessageCircle className="h-4 w-4 text-emerald-500" aria-hidden />
+            Join WhatsApp Channel
+          </a>
+        </div>
+
         <button
           onClick={dismiss}
-          className="mt-2 w-full rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground"
+          className="mt-3 w-full rounded-xl px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"
         >
           Maybe later
         </button>

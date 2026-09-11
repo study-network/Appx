@@ -6,22 +6,21 @@ import { useState } from "react";
 
 import { BatchCard } from "@/components/apex/BatchCard";
 import { CardSkeleton, ErrorState } from "@/components/apex/states";
-import { LOGO_URL } from "@/components/apex/branding";
+import { AppLogo, BRAND_NAME, BRAND_DESCRIPTION } from "@/components/apex/branding";
 import { fetchCatalog } from "@/lib/content/catalog.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PW-MARCO — Free Lectures, Notes & Batches" },
+      { title: `${BRAND_NAME} — Free Lectures, Notes & Batches` },
       {
         name: "description",
-        content:
-          "PW-MARCO, powered by MARCO. Browse batches, subjects, topics and stream lectures on any device.",
+        content: `${BRAND_DESCRIPTION}. Browse batches, subjects, topics and stream lectures on any device.`,
       },
-      { property: "og:title", content: "PW-MARCO — Free Lectures, Notes & Batches" },
+      { property: "og:title", content: `${BRAND_NAME} — Free Lectures, Notes & Batches` },
       {
         property: "og:description",
-        content: "Browse batches, subjects, topics and stream lectures on any device.",
+        content: `${BRAND_DESCRIPTION}. Browse batches, subjects, topics and stream lectures on any device.`,
       },
     ],
   }),
@@ -47,18 +46,14 @@ function Index() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
       <section className="rounded-3xl border border-border bg-card p-6 text-center sm:p-10">
-        <img
-          src={LOGO_URL}
-          alt="PW-MARCO"
-          className="mx-auto h-16 w-16 object-contain sm:h-20 sm:w-20"
-          width={80}
-          height={80}
-        />
+        <div className="mx-auto flex justify-center">
+          <AppLogo className="h-16 w-16 sm:h-20 sm:w-20" size={80} alt={BRAND_NAME} />
+        </div>
         <h1 className="mt-4 text-2xl font-bold sm:text-4xl">
           Every lecture. One clean place to study.
         </h1>
         <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
-          PW-MARCO brings batches, subjects, topics, lectures and notes together — fast on
+          {BRAND_NAME} brings batches, subjects, topics, lectures and notes together — fast on
           mobile, free to browse.
         </p>
 

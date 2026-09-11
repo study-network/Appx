@@ -22,7 +22,8 @@ async function requestToken(): Promise<string | null> {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "User-Agent": "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36",
+        "User-Agent":
+          "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36",
         Referer: `${UPSTREAM_ORIGIN}/`,
       },
     });
@@ -62,7 +63,8 @@ const PRIMARY_PREFIX = "https://proxy.streamvideo.co.in/fetch/api.penpencil.co";
 
 const BROWSER_HEADERS = {
   Accept: "application/json",
-  "User-Agent": "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36",
+  "User-Agent":
+    "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 Chrome/124 Mobile Safari/537.36",
 };
 
 function looksHealthy(status: number, body: string) {
@@ -134,7 +136,6 @@ export async function upstreamApi(path: string, search: string): Promise<Upstrea
     };
   }
 }
-
 
 /** Convenience wrapper returning parsed JSON for server-side callers. */
 export async function upstreamJson<T>(path: string, search = ""): Promise<T | null> {
