@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BatchCard } from "@/components/apex/BatchCard";
 import { CardSkeleton, EmptyState, ErrorState } from "@/components/apex/states";
 import { fetchCatalog } from "@/lib/content/catalog.functions";
+import { sortBatches2027First } from "@/lib/content/batchSort";
 
 type BatchSearch = { q?: string | undefined; page?: number | undefined };
 
@@ -54,6 +55,10 @@ function BatchesPage() {
   }
 
   const data = query.data;
+  const items = useMemo(() => {
+    if (!data || !("items" in data) || !Array.isArray(data.items)) return [];
+    return sortBatches2027First(data.items);
+  }, [data]);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
@@ -90,12 +95,12 @@ function BatchesPage() {
           <ErrorState message="Couldn't load the batch catalog." onRetry={() => query.refetch()} />
         ) : null}
         {data && "error" in data && data.error ? <ErrorState message={data.error} /> : null}
-        {data && data.items.length === 0 && !("error" in data && data.error) ? (
+        {data && items.length === 0 && !("error" in data && data.error) ? (
           <EmptyState message="No batches matched your search." />
         ) : null}
-        {data && data.items.length > 0 ? (
+        {items.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {data.items.map((b) => (
+            {items.map((b) => (
               <BatchCard key={b.batchId} batch={b} />
             ))}
           </div>

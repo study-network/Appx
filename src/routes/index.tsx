@@ -2,12 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Search, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { BatchCard } from "@/components/apex/BatchCard";
 import { CardSkeleton, ErrorState } from "@/components/apex/states";
 import { AppLogo, BRAND_NAME, BRAND_DESCRIPTION } from "@/components/apex/branding";
 import { fetchCatalog } from "@/lib/content/catalog.functions";
+import { sortBatches2027First } from "@/lib/content/batchSort";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -42,6 +43,12 @@ function Index() {
     e.preventDefault();
     navigate({ to: "/batches", search: { q: term.trim() || undefined } });
   }
+
+  const items = useMemo(() => {
+    const rawItems = query.data?.items;
+    if (!rawItems || !Array.isArray(rawItems)) return [];
+    return sortBatches2027First(rawItems);
+  }, [query.data]);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
@@ -98,9 +105,9 @@ function Index() {
         {query.data && "error" in query.data && query.data.error ? (
           <ErrorState message={query.data.error} />
         ) : null}
-        {query.data && query.data.items.length > 0 ? (
+        {items.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {query.data.items.map((b) => (
+            {items.map((b) => (
               <BatchCard key={b.batchId} batch={b} />
             ))}
           </div>

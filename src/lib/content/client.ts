@@ -97,7 +97,7 @@ export type ContentItem = {
     hls_url?: string;
     embedCode?: string;
   };
-  startTime?: string;
+  startTime?: string | number;
   date?: string;
   isFree?: boolean;
   lectureType?: string;
@@ -277,6 +277,68 @@ export function buildPlayPath(input: {
   return `/play?${params.toString()}`;
 }
 
+/**
+ * Helper to determine if a lecture's startTime is today in the user/local application timezone.
+ * Returns the timestamp in Unix seconds if it is today, or null if it is missing, invalid, or not today.
+ */
+export function getTodayStartTimeSeconds(
+  rawStartTime: string | number | undefined | null,
+  referenceDate: Date = new Date(),
+): number | null {
+  if (rawStartTime == null || rawStartTime === "") {
+    return null;
+  }
+
+  let dateObj: Date | null = null;
+  let seconds: number | null = null;
+
+  if (typeof rawStartTime === "number") {
+    if (!Number.isFinite(rawStartTime) || rawStartTime <= 0) {
+      return null;
+    }
+    if (rawStartTime < 1e11) {
+      seconds = Math.floor(rawStartTime);
+      dateObj = new Date(seconds * 1000);
+    } else {
+      seconds = Math.floor(rawStartTime / 1000);
+      dateObj = new Date(rawStartTime);
+    }
+  } else if (typeof rawStartTime === "string") {
+    const trimmed = rawStartTime.trim();
+    if (!trimmed) return null;
+
+    if (/^\d+(\.\d+)?$/.test(trimmed)) {
+      const num = Number(trimmed);
+      if (!Number.isFinite(num) || num <= 0) return null;
+      if (num < 1e11) {
+        seconds = Math.floor(num);
+        dateObj = new Date(seconds * 1000);
+      } else {
+        seconds = Math.floor(num / 1000);
+        dateObj = new Date(num);
+      }
+    } else {
+      const parsed = new Date(trimmed);
+      if (isNaN(parsed.getTime())) {
+        return null;
+      }
+      dateObj = parsed;
+      seconds = Math.floor(parsed.getTime() / 1000);
+    }
+  }
+
+  if (!dateObj || seconds == null || isNaN(dateObj.getTime())) {
+    return null;
+  }
+
+  const isToday =
+    dateObj.getFullYear() === referenceDate.getFullYear() &&
+    dateObj.getMonth() === referenceDate.getMonth() &&
+    dateObj.getDate() === referenceDate.getDate();
+
+  return isToday ? seconds : null;
+}
+
 /** Builds the external player URL from a lecture's schedule details. */
 export function buildPlayerUrl(details: ScheduleDetails, fallbackBatchId?: string) {
   const params = new URLSearchParams({
@@ -292,5 +354,11 @@ export function buildPlayerUrl(details: ScheduleDetails, fallbackBatchId?: strin
     batch_id: details.batchId ?? fallbackBatchId ?? "",
     tags_id: details.tagIds?.[0] ?? details.tags?.[0]?._id ?? "",
   });
+
+  const todayStartTime = getTodayStartTimeSeconds(details.startTime);
+  if (todayStartTime != null) {
+    params.set("startTime", todayStartTime.toString());
+  }
+
   return `${PLAYER_ORIGIN}/play.php?${params.toString()}`;
 }
