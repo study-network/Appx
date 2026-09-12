@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ClipboardList, FileText, PlayCircle } from "lucide-react";
+import { ClipboardList, FileText, Play, PlayCircle } from "lucide-react";
 import { useState } from "react";
 
 import { RowSkeleton, EmptyState, ErrorState } from "@/components/apex/states";
@@ -8,11 +8,13 @@ import {
   attachmentUrl,
   batchDetailsQuery,
   buildPlayPath,
+  buildTestPath,
   contentsQuery,
   dppTestsQuery,
   scheduleDetailsQuery,
   type ContentItem,
   type ContentType,
+  type DppTest,
   type Homework,
 } from "@/lib/content/client";
 
@@ -120,26 +122,14 @@ function TopicPage() {
         <div className="space-y-2">
           {isTests
             ? testItems.map((t) => (
-                <div
+                <DppTestRow
                   key={t.test?._id ?? t.contentId}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
-                >
-                  <ClipboardList className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold">
-                      {t.test?.name ?? "DPP Test"}
-                    </span>
-                    <span className="mt-0.5 block text-xs text-muted-foreground">
-                      {[
-                        t.test?.totalQuestions ? `${t.test.totalQuestions} questions` : null,
-                        t.test?.totalMarks ? `${t.test.totalMarks} marks` : null,
-                        t.test?.maxDuration ? `${t.test.maxDuration} min` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </span>
-                  </span>
-                </div>
+                  t={t}
+                  batchId={batchId}
+                  batchSlug={batchSlug ?? ""}
+                  subjectSlug={subjectSlug}
+                  topicId={topicId}
+                />
               ))
             : items.map((item) =>
                 tab === "videos" || tab === "DppVideos" ? (
@@ -259,5 +249,71 @@ function NotesRow({
         )}
       </div>
     </div>
+  );
+}
+
+function DppTestRow({
+  t,
+  batchId,
+  batchSlug,
+  subjectSlug,
+  topicId,
+}: {
+  t: DppTest;
+  batchId: string;
+  batchSlug: string;
+  subjectSlug: string;
+  topicId: string;
+}) {
+  const testId = t.test?._id ?? "";
+  const title = t.test?.name ?? "DPP Test";
+  const href = buildTestPath({
+    testId,
+    scheduleId: t.scheduleId,
+    contentId: t.contentId,
+    batchId,
+    batchSlug,
+    subjectSlug,
+    topicId,
+    title,
+  });
+
+  return (
+    <a
+      href={href}
+      className="group flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-3.5 transition-all hover:border-primary/50 hover:bg-muted/20"
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+          <ClipboardList className="h-5 w-5" aria-hidden />
+        </div>
+        <div className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold group-hover:text-primary">
+            {title}
+          </span>
+          <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            {[
+              t.test?.totalQuestions ? `${t.test.totalQuestions} questions` : null,
+              t.test?.totalMarks ? `${t.test.totalMarks} marks` : null,
+              t.test?.maxDuration ? `${t.test.maxDuration} min` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+            {t.isFree && (
+              <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                Free
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm transition-opacity group-hover:opacity-90">
+          <Play className="h-3 w-3 fill-current" />
+          <span>{t.tag || "Start Test"}</span>
+        </span>
+      </div>
+    </a>
   );
 }

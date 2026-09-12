@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, ChevronRight, Clock, PlayCircle } from "lucide-react";
+import {
+  BookOpen,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  GraduationCap,
+  PlayCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { CardSkeleton, EmptyState, ErrorState } from "@/components/apex/states";
 import { DEFAULT_BANNER_URL } from "@/components/apex/branding";
+import { useEnrolledBatches } from "@/lib/content/enrolledBatches";
 import {
   batchDetailsQuery,
   buildPlayPath,
@@ -178,6 +186,8 @@ function BatchPage() {
   const initialCover =
     (batch?.previewImage ? imageUrl(batch.previewImage) : null) || DEFAULT_BANNER_URL;
   const [coverSrc, setCoverSrc] = useState<string>(initialCover);
+  const { enroll, remove, isEnrolled } = useEnrolledBatches();
+  const enrolled = isEnrolled(batchId);
 
   useEffect(() => {
     const nextCover =
@@ -187,6 +197,17 @@ function BatchPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
+      <div className="mb-4">
+        <Link
+          to="/batches"
+          aria-label="Back to Batches"
+          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-semibold text-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Back</span>
+        </Link>
+      </div>
+
       {query.isPending ? (
         <div className="space-y-4">
           <div className="h-40 animate-pulse rounded-2xl bg-muted" />
@@ -231,6 +252,50 @@ function BatchPage() {
                   {plainText(batch.shortDescription)}
                 </p>
               ) : null}
+
+              <div className="mt-4 flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (enrolled) {
+                      remove(batchId);
+                    } else {
+                      enroll({
+                        id: batchId,
+                        batchId: batchId,
+                        name: batch.name,
+                        photo: coverSrc,
+                        className: batch.class,
+                        language: batch.language,
+                        startDate: batch.startDate,
+                        endDate: batch.endDate,
+                        amount: null,
+                        rawAmount: null,
+                        exam: null,
+                        byName: batch.byName,
+                        updatedAt: null,
+                      });
+                    }
+                  }}
+                  className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    enrolled
+                      ? "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  }`}
+                >
+                  {enrolled ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                      <span>Enrolled ✓ (Click to Remove)</span>
+                    </>
+                  ) : (
+                    <>
+                      <GraduationCap className="h-4 w-4" aria-hidden="true" />
+                      <span>Enroll in this Batch</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

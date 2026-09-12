@@ -179,6 +179,38 @@ export type DppTest = {
   tag?: string;
 };
 
+export type TestDetails = {
+  _id: string;
+  name: string;
+  type?: string;
+  totalQuestions?: number;
+  totalMarks?: number;
+  maxDuration?: number;
+  difficultyLevel?: string;
+  language?: string;
+  testLanguages?: string[];
+  template?: string;
+  status?: string;
+  infoMessage?: string;
+  tag1?: string | null;
+  tag2?: string | null;
+  testActivityStatus?: string;
+  createdAt?: string;
+};
+
+export type TestInstructions = {
+  _id: string;
+  name: string;
+  type?: string;
+  maxDuration?: number;
+  totalMarks?: number;
+  totalQuestions?: number;
+  languageCodes?: { language: string; isSelected: boolean; code: string }[];
+  tag1?: string | null;
+  tag2?: string | null;
+  template?: string;
+};
+
 export const dppTestsQuery = (
   batchId: string,
   batchSubjectId: string,
@@ -194,6 +226,20 @@ export const dppTestsQuery = (
       isSubjective: "false",
       page,
     }),
+  staleTime: 5 * 60 * 1000,
+});
+
+export const testDetailsQuery = (testId: string) => ({
+  queryKey: ["test-details", testId],
+  queryFn: () => contentGet<TestDetails>(`v3/test-service/tests/${testId}/details`),
+  enabled: Boolean(testId),
+  staleTime: 5 * 60 * 1000,
+});
+
+export const testInstructionsQuery = (testId: string) => ({
+  queryKey: ["test-instructions", testId],
+  queryFn: () => contentGet<TestInstructions>(`v3/test-service/tests/${testId}/instructions`),
+  enabled: Boolean(testId),
   staleTime: 5 * 60 * 1000,
 });
 
@@ -275,6 +321,29 @@ export function buildPlayPath(input: {
   });
   if (input.title) params.set("title", input.title);
   return `/play?${params.toString()}`;
+}
+
+export function buildTestPath(input: {
+  testId: string;
+  scheduleId?: string | undefined;
+  contentId?: string | undefined;
+  batchId?: string | undefined;
+  batchSlug?: string | undefined;
+  subjectSlug?: string | undefined;
+  topicId?: string | undefined;
+  title?: string | undefined;
+}) {
+  const params = new URLSearchParams({
+    testId: input.testId,
+  });
+  if (input.scheduleId) params.set("scheduleId", input.scheduleId);
+  if (input.contentId) params.set("contentId", input.contentId);
+  if (input.batchId) params.set("batchId", input.batchId);
+  if (input.batchSlug) params.set("batchSlug", input.batchSlug);
+  if (input.subjectSlug) params.set("subjectSlug", input.subjectSlug);
+  if (input.topicId) params.set("topicId", input.topicId);
+  if (input.title) params.set("title", input.title);
+  return `/test?${params.toString()}`;
 }
 
 /**

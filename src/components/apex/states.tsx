@@ -3,16 +3,38 @@ import { AlertTriangle, Inbox } from "lucide-react";
 
 export function CardSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="animate-pulse rounded-2xl border border-border bg-card p-4"
-          aria-hidden
+          className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm animate-pulse"
+          aria-hidden="true"
         >
-          <div className="h-28 w-full rounded-xl bg-muted" />
-          <div className="mt-3 h-4 w-3/4 rounded bg-muted" />
-          <div className="mt-2 h-3 w-1/2 rounded bg-muted" />
+          {/* Banner Skeleton (16:9) */}
+          <div className="aspect-[16/9] w-full bg-muted" />
+
+          {/* Content Skeleton */}
+          <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
+            <div className="space-y-3">
+              <div className="h-5 w-4/5 rounded-md bg-muted" />
+              <div className="h-4 w-3/5 rounded-md bg-muted" />
+              <div className="space-y-2 pt-2">
+                <div className="h-4 w-1/2 rounded-md bg-muted" />
+                <div className="h-4 w-2/3 rounded-md bg-muted" />
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-3 border-t border-border/60 pt-3">
+              <div className="flex items-center gap-2.5">
+                <div className="h-6 w-20 rounded-md bg-muted" />
+                <div className="h-5 w-12 rounded-md bg-muted" />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-10 flex-1 rounded-xl bg-muted" />
+                <div className="h-10 w-24 rounded-xl bg-muted" />
+              </div>
+            </div>
+          </div>
         </div>
       ))}
     </div>

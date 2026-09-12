@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Calendar, CheckCircle2, User } from "lucide-react";
+import { Calendar, CheckCircle2, Trash2, User } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import type { CatalogBatch } from "@/lib/content/catalog.server";
-import { useEnrolledBatches } from "@/lib/content/enrolledBatches";
+import type { EnrolledBatch } from "@/lib/content/enrolledBatches";
 import { DEFAULT_BANNER_URL } from "./branding";
 
 function formatDisplayDate(dateStr?: string | null): string | null {
@@ -17,7 +16,7 @@ function formatDisplayDate(dateStr?: string | null): string | null {
   });
 }
 
-function getClassInformation(batch: CatalogBatch): string {
+function getClassInformation(batch: EnrolledBatch): string {
   const parts: string[] = [];
   if (batch.className?.trim()) {
     const rawClass = batch.className.trim();
@@ -41,7 +40,7 @@ function getClassInformation(batch: CatalogBatch): string {
   return "All Students • Complete Course";
 }
 
-function getDateRange(batch: CatalogBatch): string {
+function getDateRange(batch: EnrolledBatch): string {
   const start = formatDisplayDate(batch.startDate);
   const end = formatDisplayDate(batch.endDate);
   if (start && end) {
@@ -56,11 +55,15 @@ function getDateRange(batch: CatalogBatch): string {
   return "Flexible Schedule";
 }
 
-export function BatchCard({ batch }: { batch: CatalogBatch }) {
+export function EnrolledBatchCard({
+  batch,
+  onRemove,
+}: {
+  batch: EnrolledBatch;
+  onRemove: (batchId: string) => void;
+}) {
   const initialBanner = batch.photo?.trim() ? batch.photo.trim() : DEFAULT_BANNER_URL;
   const [imgSrc, setImgSrc] = useState(initialBanner);
-  const { enroll, isEnrolled } = useEnrolledBatches();
-  const enrolled = isEnrolled(batch.batchId);
 
   useEffect(() => {
     setImgSrc(batch.photo?.trim() ? batch.photo.trim() : DEFAULT_BANNER_URL);
@@ -68,13 +71,6 @@ export function BatchCard({ batch }: { batch: CatalogBatch }) {
 
   const classInfo = useMemo(() => getClassInformation(batch), [batch]);
   const dateRange = useMemo(() => getDateRange(batch), [batch]);
-
-  const priceText = useMemo(() => {
-    if (batch.amount != null && batch.amount > 0) {
-      return `₹${batch.amount.toLocaleString("en-IN")}`;
-    }
-    return "₹0";
-  }, [batch.amount]);
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:border-accent hover:shadow-md">
@@ -130,48 +126,43 @@ export function BatchCard({ batch }: { batch: CatalogBatch }) {
           </div>
         </div>
 
-        {/* Bottom Section: Price + Action Buttons */}
+        {/* Bottom Section: Enrolled Status + Action Buttons */}
         <div className="mt-4 space-y-3 border-t border-border/60 pt-3">
-          {/* Price & Free Badge */}
-          <div className="flex items-center gap-2.5">
-            <span className="text-lg font-extrabold tracking-tight text-foreground sm:text-xl">
-              {priceText}
+          {/* Enrolled Status */}
+          <div className="flex items-center justify-between">
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+              Enrolled
             </span>
-            <span className="inline-flex items-center rounded-md bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-              FREE
-            </span>
+            {batch.enrolledAt ? (
+              <span className="text-xs text-muted-foreground">
+                Enrolled{" "}
+                {new Date(batch.enrolledAt).toLocaleDateString("en-IN", {
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
+            ) : null}
           </div>
 
-          {/* Action Buttons: [ Enroll Now ] [ Explore ] */}
+          {/* Action Buttons: [ Open Batch ] [ Remove ] */}
           <div className="flex items-center gap-2">
             <Link
               to="/batch/$batchId"
               params={{ batchId: batch.batchId }}
-              onClick={() => {
-                enroll(batch);
-              }}
-              className={`flex-1 rounded-xl px-4 py-2.5 text-center text-sm font-bold shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring flex items-center justify-center gap-1.5 ${
-                enrolled
-                  ? "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
-              }`}
+              className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              {enrolled ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                  <span>Enrolled</span>
-                </>
-              ) : (
-                <span>Enroll Now</span>
-              )}
+              Open Batch
             </Link>
-            <Link
-              to="/batch/$batchId"
-              params={{ batchId: batch.batchId }}
-              className="rounded-xl border border-border bg-secondary/80 px-4 py-2.5 text-center text-sm font-semibold text-secondary-foreground transition-all hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            <button
+              type="button"
+              onClick={() => onRemove(batch.batchId)}
+              aria-label={`Remove ${batch.name} from enrolled batches`}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-center text-sm font-semibold text-destructive transition-all hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
             >
-              Explore
-            </Link>
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+              <span>Remove</span>
+            </button>
           </div>
         </div>
       </div>

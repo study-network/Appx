@@ -16,6 +16,10 @@ export type CatalogBatch = {
   className: string | null;
   language: string | null;
   startDate: string | null;
+  endDate: string | null;
+  amount: number | null;
+  rawAmount: string | null;
+  byName: string | null;
   updatedAt: string | null;
 };
 
@@ -28,6 +32,9 @@ type RawBatch = {
   class?: string | null;
   language?: string | null;
   start_date?: string | null;
+  end_date?: string | null;
+  amount?: string | number | null;
+  byName?: string | null;
   updated_at?: string | null;
 };
 
@@ -53,17 +60,26 @@ async function loadCatalog(): Promise<CatalogBatch[]> {
   const rows = Array.isArray(json?.data) ? json.data : [];
   return rows
     .filter((r) => r?.batch_id && r?.name)
-    .map((r) => ({
-      id: String(r.id ?? r.batch_id),
-      batchId: String(r.batch_id),
-      name: String(r.name),
-      photo: r.photo ?? null,
-      exam: parseExam(r.exam),
-      className: r.class ?? null,
-      language: r.language ?? null,
-      startDate: r.start_date ?? null,
-      updatedAt: r.updated_at ?? null,
-    }))
+    .map((r) => {
+      const amtStr = r.amount != null ? String(r.amount).trim() : null;
+      const parsedAmt =
+        amtStr !== null && amtStr !== "" && !Number.isNaN(Number(amtStr)) ? Number(amtStr) : null;
+      return {
+        id: String(r.id ?? r.batch_id),
+        batchId: String(r.batch_id),
+        name: String(r.name),
+        photo: r.photo ?? null,
+        exam: parseExam(r.exam),
+        className: r.class ?? null,
+        language: r.language ?? null,
+        startDate: r.start_date ?? null,
+        endDate: r.end_date ?? null,
+        amount: parsedAmt,
+        rawAmount: amtStr,
+        byName: r.byName ?? null,
+        updatedAt: r.updated_at ?? null,
+      };
+    })
     .sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""));
 }
 

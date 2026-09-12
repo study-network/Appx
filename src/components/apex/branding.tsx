@@ -7,7 +7,7 @@ export const LOGO_URL = "https://i.ibb.co/7JhvrF0L/pw-logo.jpg";
 export const LOCAL_LOGO_URL = "/pw-logo.jpg";
 export const DEFAULT_BANNER_URL =
   "https://i.ibb.co/q32pY46S/file-00000000574481fbb755fc6faf1377a0.png";
-export const TELEGRAM_URL = "https://t.me/pw_APi";
+export const TELEGRAM_URL = "https://t.me/+lxSx0imjBEo2ZTll";
 export const WHATSAPP_URL = "https://whatsapp.com/channel/0029VbCbDOt0VycLRqoBz82x";
 
 export function AppLogo({

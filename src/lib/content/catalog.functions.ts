@@ -8,7 +8,7 @@ const catalogInput = z.object({
 });
 
 export const fetchCatalog = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => catalogInput.parse(input ?? {}))
+  .validator((input: unknown) => catalogInput.parse(input ?? {}))
   .handler(async ({ data }) => {
     const { queryCatalog } = await import("./catalog.server");
     try {

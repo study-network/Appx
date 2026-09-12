@@ -99,7 +99,7 @@ function BatchesPage() {
           <EmptyState message="No batches matched your search." />
         ) : null}
         {items.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {items.map((b) => (
               <BatchCard key={b.batchId} batch={b} />
             ))}

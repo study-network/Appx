@@ -8,7 +8,7 @@ A responsive educational platform bringing batches, subjects, topics, lectures a
 - **Name:** PW Study Network
 - **Logo:** `https://i.ibb.co/7JhvrF0L/pw-logo.jpg`
 - **Fallback Batch Banner:** `https://i.ibb.co/q32pY46S/file-00000000574481fbb755fc6faf1377a0.png`
-- **Telegram Channel:** `https://t.me/pw_APi`
+- **Telegram Channel:** `https://t.me/+lxSx0imjBEo2ZTll`
 - **WhatsApp Channel:** `https://whatsapp.com/channel/0029VbCbDOt0VycLRqoBz82x`
 
 ## Features
